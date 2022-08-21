@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-# Create your models here.
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -9,10 +8,10 @@ class Category(models.Model):
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
-        verbose_name_plural = 'categories'
+        verbose_name_plural = "categories"
 
-    # def get_absolute_url(self):
-    #     return reverse("store:category_list", args=[self.slug], kwargs={"pk": self.pk})
+    def get_absolute_url(self):
+        return reverse("store:category_list", args=[self.slug])
 
     def __str__(self):
         return self.name
@@ -20,11 +19,13 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(
-        Category, related_name="product", on_delete=models.CASCADE)
+        Category, related_name="product", on_delete=models.CASCADE
+    )
     created_by = models.ForeignKey(
-        User, related_name="product_creator", on_delete=models.CASCADE)
+        User, related_name="product_creator", on_delete=models.CASCADE
+    )
     title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255, default='admin')
+    author = models.CharField(max_length=255, default="admin")
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="images/")
     slug = models.SlugField(max_length=255)
@@ -35,8 +36,11 @@ class Product(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = 'Products'
-        ordering = ('-created',)
+        verbose_name_plural = "Products"
+        ordering = ("-created",)
+
+    def get_absolute_url(self):
+        return reverse("store:product_detail", args=[self.slug])
 
     def __str__(self):
         return self.title
